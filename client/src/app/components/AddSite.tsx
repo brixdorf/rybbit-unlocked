@@ -23,7 +23,7 @@ import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { Switch } from "../../components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../components/ui/tooltip";
 import { authClient } from "../../lib/auth";
-import { IS_CLOUD } from "../../lib/const";
+import { CLOUD_FEATURES, IS_CLOUD } from "../../lib/const";
 import { resetStore, useStore } from "../../lib/store";
 import { planIncludesReplay } from "../../lib/subscription/planUtils";
 import { useStripeSubscription } from "../../lib/subscription/useStripeSubscription";
@@ -142,7 +142,7 @@ export function AddSite({
       description: t("Track Core Web Vitals metrics (LCP, CLS, INP, FCP, TTFB)"),
       badge: <Badge variant="success">Standard</Badge>,
       disabled: standardFeaturesDisabled,
-      hidden: isMobile || !IS_CLOUD,
+      hidden: isMobile || !CLOUD_FEATURES,
     },
     {
       key: "trackSpaNavigation",
