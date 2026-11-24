@@ -3,6 +3,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const IS_CLOUD = process.env.CLOUD === "true";
+// rybbit-unlocked: separates "cloud features" from "cloud billing". IS_CLOUD still means billing/quotas/
+// commercial flows; CLOUD_FEATURES gates features that only need their own runtime dependencies. See UNLOCK.md.
+export const UNLOCK_CLOUD_FEATURES = process.env.UNLOCK_CLOUD_FEATURES !== "false";
+export const CLOUD_FEATURES = IS_CLOUD || UNLOCK_CLOUD_FEATURES;
 export const DEPLOYMENT = process.env.DEPLOYMENT;
 export const DISABLE_SIGNUP = process.env.DISABLE_SIGNUP === "true";
 export const DISABLE_TELEMETRY = process.env.DISABLE_TELEMETRY === "true";

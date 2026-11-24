@@ -6,6 +6,10 @@ export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE
 
 
 export const IS_CLOUD = process.env.NEXT_PUBLIC_CLOUD === "true";
+// rybbit-unlocked: separates "cloud features" from "cloud billing". IS_CLOUD still means billing/quotas/
+// commercial flows; CLOUD_FEATURES gates features that only need their own runtime dependencies. See UNLOCK.md.
+export const UNLOCK_CLOUD_FEATURES = process.env.NEXT_PUBLIC_UNLOCK_CLOUD_FEATURES !== "false";
+export const CLOUD_FEATURES = IS_CLOUD || UNLOCK_CLOUD_FEATURES;
 export const DEPLOYMENT = process.env.NEXT_PUBLIC_DEPLOYMENT;
 export const LITE_DASHBOARD = process.env.NEXT_PUBLIC_LITE_DASHBOARD === "true";
 
