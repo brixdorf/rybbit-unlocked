@@ -24,6 +24,7 @@ import { useLayerVisibility } from "./3d/hooks/useLayerVisibility";
 import { useMapbox } from "./3d/hooks/useMapbox";
 import { useSubdivisionsLayer } from "./3d/hooks/useSubdivisionsLayer";
 import { useShallow } from "zustand/react/shallow";
+import { useConfigs } from "../../../lib/configs";
 import { useTimelineStore } from "./timelineStore";
 import { useTimelineSessions } from "./3d/hooks/timelineLayer/useTimelineSessions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
@@ -49,6 +50,15 @@ export default function GlobePage() {
       setTimelineStyle: s.setTimelineStyle,
     }))
   );
+
+  // rybbit-unlocked: 3D is the default when cloud features are on, but it needs a Mapbox token; fall back to 2D without one
+  const { configs, isLoading: isLoadingConfigs } = useConfigs();
+  const setMapMode = useGlobeStore(s => s.setMapMode);
+  useEffect(() => {
+    if (!isLoadingConfigs && !configs?.mapboxToken && mapMode === "3D") {
+      setMapMode("2D");
+    }
+  }, [isLoadingConfigs, configs?.mapboxToken, mapMode, setMapMode]);
 
   // Automatically switch styles based on view
   useEffect(() => {
