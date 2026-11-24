@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumenly demo page - Rybbit tracker test</title>
+  <style>
+    :root { color-scheme: light dark; --bg: #fff; --fg: #1a1a1a; --muted: #6b6b6b; --line: #d8d8d8; --accent: #0b7a53; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #121212; --fg: #ececec; --muted: #9a9a9a; --line: #333; --accent: #3ecf8e; } }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, sans-serif; }
+    main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1 { font-size: 1.4rem; margin: 0 0 4px; }
+    h2 { font-size: 1.05rem; margin: 28px 0 8px; }
+    p, li { color: var(--muted); }
+    code { background: color-mix(in srgb, var(--fg) 10%, transparent); padding: 1px 5px; border-radius: 4px; }
+    fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 0 0 12px; }
+    label { display: block; margin: 6px 0; }
+    input[type=text], input[type=email], input[type=password] { width: 100%; box-sizing: border-box; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: inherit; }
+    button { padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: inherit; cursor: pointer; margin: 4px 6px 4px 0; }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    nav a { margin-right: 14px; color: var(--accent); }
+    #log { white-space: pre-wrap; font: 12px/1.4 ui-monospace, monospace; border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-height: 60px; max-height: 180px; overflow: auto; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Lumenly demo page</h1>
+  <p>Loads the real Rybbit tracking script from your backend so you can test the tracker by hand. Serve this folder over
+    http (for example <code>python3 -m http.server 5500 --directory scripts/demo</code>) and open
+    <code>http://localhost:5500/site.html?site=1&amp;base=http://localhost:3001</code>.</p>
+
+  <fieldset>
+    <legend>Tracker configuration</legend>
+    <label>Backend URL <input type="text" id="base" value="http://localhost:3001" /></label>
+    <label>Site ID <input type="text" id="site" value="YOUR_SITE_ID" /></label>
+    <button class="primary" id="load">Load tracking script</button>
+    <span id="status"></span>
+  </fieldset>
+
+  <h2>Navigation (SPA pageviews)</h2>
+  <nav>
+    <a href="#/" data-spa="/">Home</a>
+    <a href="#/pricing" data-spa="/pricing">Pricing</a>
+    <a href="#/features" data-spa="/features">Features</a>
+    <a href="#/blog/ga4-alternatives" data-spa="/blog/ga4-alternatives">Blog post</a>
+    <a href="#/signup" data-spa="/signup">Signup</a>
+    <a href="#/welcome" data-spa="/welcome">Welcome</a>
+  </nav>
+  <p>Links use <code>history.pushState</code>, which the tracker turns into pageviews when "Track SPA navigation" is on. Add
+    <code>?utm_source=newsletter&amp;utm_medium=email&amp;utm_campaign=manual-test</code> to the page URL to test campaigns.</p>
+
+  <h2>Custom events and identify</h2>
+  <button onclick="track('event', 'plan_selected', { plan: 'pro', billing: 'annual' })">plan_selected</button>
+  <button onclick="track('event', 'signup_completed', { plan: 'pro', method: 'email' })">signup_completed</button>
+  <button onclick="track('identify', 'usr_demo_001', { name: 'Demo User', email: 'demo@lumenly.example', plan: 'pro' })">identify user</button>
+  <button onclick="track('clearUserId')">clear user</button>
+
+  <h2>Auto-captured interactions (enable them in Site Settings)</h2>
+  <button type="button">Get started free</button>
+  <button type="button" data-rybbit-prop-cta="hero">Start free trial</button>
+  <p>Select and copy this text: <code>docker compose up -d</code></p>
+  <form id="demo-form" name="contact" action="#" method="post" onsubmit="event.preventDefault(); log('form submitted');">
+    <label>Email <input type="email" name="email" placeholder="you@example.com" /></label>
+    <label>Password <input type="password" name="password" /></label>
+    <button type="submit">Submit form</button>
+  </form>
+
+  <h2>Outbound links and errors</h2>
+  <a href="https://github.com/" target="_blank" rel="noopener">github.com (outbound link)</a><br />
+  <a href="https://news.ycombinator.com/" target="_blank" rel="noopener">news.ycombinator.com (outbound link)</a><br />
+  <button onclick="setTimeout(() => { null.boom; }, 0)">Throw TypeError</button>
+  <button onclick="setTimeout(() => { undefinedFunction(); }, 0)">Throw ReferenceError</button>
+  <button onclick="track('error', new Error('Manual error from site.html'), { filename: location.href })">rybbit.error()</button>
+
+  <h2>Log</h2>
+  <div id="log"></div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  if (params.get("base")) $("base").value = params.get("base");
+  if (params.get("site")) $("site").value = params.get("site");
+  function log(msg) { $("log").textContent += msg + "\n"; }
+
+  function loadTracker() {
+    const base = $("base").value.replace(/\/+$/, "");
+    const site = $("site").value.trim();
+    if (!site || site === "YOUR_SITE_ID") { $("status").textContent = "Enter a real site id first."; return; }
+    if (document.querySelector('script[data-rybbit-demo]')) { $("status").textContent = "Already loaded - reload the page to change settings."; return; }
+    const s = document.createElement("script");
+    s.src = base + "/api/script.js"; // analyticsHost is derived from this URL
+    s.defer = true;
+    s.setAttribute("data-site-id", site); // the site id placeholder
+    s.setAttribute("data-rybbit-demo", "1");
+    s.onload = () => { $("status").textContent = "Tracker loaded."; log("script loaded from " + s.src); };
+    s.onerror = () => { $("status").textContent = "Could not load the script - is the backend running?"; };
+    document.head.appendChild(s);
+  }
+  $("load").addEventListener("click", loadTracker);
+  if (params.get("site")) loadTracker();
+
+  document.querySelectorAll("a[data-spa]").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault();
+    history.pushState({}, "", location.pathname + location.search + "#" + a.dataset.spa);
+    document.title = "Lumenly - " + a.textContent;
+    log("navigated to " + a.dataset.spa);
+  }));
+  window.addEventListener("error", e => log("window error: " + e.message));
+  // The tracker exposes window.rybbit once the script has loaded.
+  function track(method, ...args) {
+    if (!window.rybbit) { log("tracker not loaded yet - click \"Load tracking script\" first"); return; }
+    window.rybbit[method](...args);
+    log("rybbit." + method + "(" + args.map(a => JSON.stringify(a) ?? String(a)).join(", ") + ")");
+  }
+</script>
+</body>
+</html>
