@@ -1,0 +1,135 @@
+# Reviewed IS_CLOUD usages (rybbit-unlocked). Format: path<TAB>trimmed source line<TAB>reason
+# Reasons: billing, signup, telemetry, quota, commercial-ui, cloud-infra. Lines starting with # are comments.
+# A new IS_CLOUD usage after an upstream merge that is not listed here needs review: feature -> CLOUD_FEATURES, billing -> add here.
+client/src/api/admin/hooks/useImport.ts	const isFreeTier = IS_CLOUD && subscription?.eventLimit === DEFAULT_EVENT_LIMIT;	quota
+client/src/app/(home)/page.tsx	IS_CLOUD && !!subscription && subscription.status !== "active" && subscription.status !== "trialing";	billing
+client/src/app/(home)/page.tsx	const isLoading = isLoadingOrganizations || isPending || isLoadingSites || (IS_CLOUD && isLoadingSubscription);	billing
+client/src/app/Providers.tsx	{appEnv === "prod" && IS_CLOUD && (	telemetry
+client/src/app/[site]/components/Header/AffiliateBanner.tsx	if (!IS_CLOUD || !isProduction || dismissed) return null;	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	const steps = IS_CLOUD ? [{ label: t("Account") }, { label: t("Pick plan") }] : [{ label: t("Account") }];	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	router.replace(`/${siteId}/main${pickPlan && IS_CLOUD ? "?claim=plan" : ""}`);	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	if (IS_CLOUD && !turnstileToken) {	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	if (IS_CLOUD && turnstileToken) {	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	if (!IS_CLOUD) finish();	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	if (!IS_CLOUD) finish();	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	if (planOrganizationId && IS_CLOUD) {	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	{IS_CLOUD ? t("Start your 7-day free trial") : t("Get started with Rybbit")}	signup
+client/src/app/[site]/components/Header/ClaimSiteDialog.tsx	{IS_CLOUD && (	signup
+client/src/app/[site]/replay/components/EnableSessionReplay.tsx	const canEnableReplay = !IS_CLOUD || planIncludesReplay(subscription);	billing
+client/src/app/admin/page.tsx	// if (!IS_CLOUD && !DEPLOYMENT) notFound();	commercial-ui
+client/src/app/as/callback/page.tsx	if (IS_CLOUD && !turnstileToken) {	signup
+client/src/app/as/callback/page.tsx	if (IS_CLOUD && turnstileToken) {	signup
+client/src/app/as/callback/page.tsx	{IS_CLOUD && (	signup
+client/src/app/as/callback/page.tsx	disabled={IS_CLOUD ? !turnstileToken || isLoading : isLoading}	signup
+client/src/app/components/AddSite.tsx	const isOverSiteLimit = IS_CLOUD && siteLimit !== null && (sites?.sites?.length || 0) >= siteLimit;	quota
+client/src/app/components/AddSite.tsx	const sessionReplayDisabled = !planIncludesReplay(subscription) && IS_CLOUD;	quota
+client/src/app/components/AddSite.tsx	IS_CLOUD;	quota
+client/src/app/components/AddSite.tsx	badge={IS_CLOUD ? toggle.badge : undefined}	quota
+client/src/app/components/AddSite.tsx	if (subscription?.status !== "active" && subscription?.status !== "trialing" && IS_CLOUD) {	quota
+client/src/app/components/Footer.tsx	{!IS_CLOUD && (	commercial-ui
+client/src/app/components/Footer.tsx	{IS_CLOUD && (	commercial-ui
+client/src/app/invitation/components/signup.tsx	if (IS_CLOUD && !turnstileToken) {	signup
+client/src/app/invitation/components/signup.tsx	if (IS_CLOUD && turnstileToken) {	signup
+client/src/app/invitation/components/signup.tsx	disabled={IS_CLOUD ? !turnstileToken || isLoading : isLoading}	signup
+client/src/app/invitation/components/signup.tsx	{IS_CLOUD && (	signup
+client/src/app/login/page.tsx	if (IS_CLOUD && process.env.NODE_ENV === "production" && !turnstileToken) {	signup
+client/src/app/login/page.tsx	if (IS_CLOUD && process.env.NODE_ENV === "production" && turnstileToken) {	signup
+client/src/app/login/page.tsx	const turnstileEnabled = IS_CLOUD && process.env.NODE_ENV === "production";	signup
+client/src/app/login/page.tsx	IS_CLOUD && (	signup
+client/src/app/login/page.tsx	{!IS_CLOUD && (	signup
+client/src/app/reset-password/page.tsx	if (IS_CLOUD && process.env.NODE_ENV === "production" && !turnstileToken) {	signup
+client/src/app/reset-password/page.tsx	if (IS_CLOUD && process.env.NODE_ENV === "production" && turnstileToken) {	signup
+client/src/app/reset-password/page.tsx	{IS_CLOUD && process.env.NODE_ENV === "production" && (	signup
+client/src/app/reset-password/page.tsx	disabled={IS_CLOUD && process.env.NODE_ENV === "production" ? !turnstileToken || isLoading : isLoading}	signup
+client/src/app/settings/account/components/ApiKeyManager.tsx	const isPlanGated = IS_CLOUD && isFreePlan;	quota
+client/src/app/settings/account/components/ApiKeyManager.tsx	? IS_CLOUD	quota
+client/src/app/settings/organization/components/InviteMemberDialog.tsx	if (!IS_CLOUD) return false;	signup
+client/src/app/settings/organization/components/PeopleTable.tsx	IS_CLOUD && canManageMembers && assignableRoles.some(role => role === invitation.role);	signup
+client/src/app/settings/organization/components/PeopleTable.tsx	(IS_CLOUD ? (	signup
+client/src/app/signup/components/AccountStep.tsx	{IS_CLOUD && (	signup
+client/src/app/signup/components/AccountStep.tsx	disabled={IS_CLOUD && !turnstileToken}	signup
+client/src/app/signup/components/SetupStep.tsx	{IS_CLOUD ? t("Start free trial") : t("Continue")}	signup
+client/src/app/signup/page.tsx	const maxStep = IS_CLOUD ? 3 : 2;	signup
+client/src/app/signup/page.tsx	if (IS_CLOUD && !turnstileToken) {	signup
+client/src/app/signup/page.tsx	if (IS_CLOUD && turnstileToken) {	signup
+client/src/app/signup/page.tsx	if (IS_CLOUD) askReferralSourceLater();	signup
+client/src/app/signup/page.tsx	if (IS_CLOUD) {	signup
+client/src/app/signup/page.tsx	const steps = IS_CLOUD	signup
+client/src/app/signup/page.tsx	{IS_CLOUD && trialEligible ? t("Start your 7-day free trial") : t("Get started with Rybbit")}	signup
+client/src/app/signup/page.tsx	{IS_CLOUD && (	signup
+client/src/app/signup/page.tsx	{!IS_CLOUD && (	signup
+client/src/app/signup/page.tsx	{IS_CLOUD && (	signup
+client/src/app/try/page.tsx	{IS_CLOUD	signup
+client/src/components/AppSidebar.tsx	{IS_CLOUD && (subscription?.status === "active" || subscription?.status === "trialing") && (	billing
+client/src/components/DisabledOverlay.tsx	if (!IS_CLOUD || !subscription) {	billing
+client/src/components/ReferralSourcePrompt.tsx	setAsking(IS_CLOUD && window.localStorage.getItem(ASK_KEY) === "1");	signup
+client/src/components/SiteSettings/ImportManager.tsx	const hasActiveImport = IS_CLOUD && sortedImports.some(isImportRunning);	quota
+client/src/components/SiteSettings/TrackingTab.tsx	const sessionReplayDisabled = !planIncludesReplay(effectiveSubscription) && IS_CLOUD;	quota
+client/src/components/SiteSettings/TrackingTab.tsx	IS_CLOUD;	quota
+client/src/components/SiteSettings/TrackingTab.tsx	badge={IS_CLOUD ? toggle.badge : undefined}	quota
+client/src/components/VersionCheck.tsx	if (IS_CLOUD || typeof window === "undefined") return false;	commercial-ui
+client/src/components/auth/SocialButtons.tsx	if (!IS_CLOUD) return null;	signup
+client/src/components/command-palette/usePaletteCommands.tsx	if (IS_CLOUD && can("billing:manage")) {	billing
+client/src/components/sidebar/NavigationSidebar.tsx	can("members:manage") || can("teams:manage") || (IS_CLOUD && (can("billing:manage") || can("dpa:manage")));	billing
+client/src/components/sidebar/NavigationSidebar.tsx	{IS_CLOUD && can("billing:manage") && (	billing
+client/src/components/sidebar/NavigationSidebar.tsx	{IS_CLOUD && can("dpa:manage") && (	billing
+client/src/components/subscription/components/InvoicesSection.tsx	enabled: !!activeOrg && IS_CLOUD,	billing
+client/src/lib/const.ts	export const IS_CLOUD = process.env.NEXT_PUBLIC_CLOUD === "true";	cloud-infra
+client/src/lib/const.ts	// rybbit-unlocked: separates "cloud features" from "cloud billing". IS_CLOUD still means billing/quotas/	cloud-infra
+client/src/lib/const.ts	export const CLOUD_FEATURES = IS_CLOUD || UNLOCK_CLOUD_FEATURES;	cloud-infra
+client/src/lib/subscription/useStripeSubscription.ts	if (!orgId || !IS_CLOUD) {	billing
+server/src/api/admin/collectTelemetry.ts	if (!IS_CLOUD) {	telemetry
+server/src/api/analytics/generatePdfReport.ts	if (!IS_CLOUD) {	billing
+server/src/api/as/activate.ts	return IS_CLOUD && !!process.env.APPSUMO_CLIENT_ID && !!process.env.APPSUMO_CLIENT_SECRET;	signup
+server/src/api/as/webhook.ts	return IS_CLOUD && !!process.env.APPSUMO_CLIENT_ID && !!process.env.APPSUMO_CLIENT_SECRET;	signup
+server/src/api/routes.ts	if (IS_CLOUD) {	billing
+server/src/api/routes.ts	if (IS_CLOUD) {	billing
+server/src/api/sites/batchImportEvents.ts	if (IS_CLOUD) {	quota
+server/src/api/sites/createSiteImport.ts	if (IS_CLOUD) {	quota
+server/src/api/sites/deleteSiteImport.ts	if (IS_CLOUD) {	quota
+server/src/api/sites/getSiteImports.ts	if (IS_CLOUD) {	quota
+server/src/api/sites/getSiteUsage.ts	if (IS_CLOUD) {	billing
+server/src/api/sites/getSitesFromOrg.ts	IS_CLOUD ? getSubscriptionInner(organizationId) : null,	billing
+server/src/api/sites/getSitesFromOrg.ts	const eventLimit = IS_CLOUD ? subscription?.eventLimit || DEFAULT_EVENT_LIMIT : Infinity;	billing
+server/src/api/sites/siteLimit.ts	if (!IS_CLOUD) {	quota
+server/src/api/sites/siteTransfers.ts	if (IS_CLOUD && !recipient.emailVerified) {	signup
+server/src/api/user/createApiKey.ts	if (IS_CLOUD) {	quota
+server/src/api/user/createOrgApiKey.ts	if (IS_CLOUD) {	quota
+server/src/api/user/getOrgApiUsage.ts	if (!IS_CLOUD) {	quota
+server/src/cluster.ts	if (IS_CLOUD && process.env.NODE_ENV !== "development") {	commercial-ui
+server/src/cluster.ts	if (IS_CLOUD) {	commercial-ui
+server/src/db/clickhouse/clickhouse.ts	if (IS_CLOUD) {	cloud-infra
+server/src/db/postgres/initPostgres.ts	if (IS_CLOUD) {	cloud-infra
+server/src/db/postgres/initPostgres.ts	* This runs only in cloud environments (IS_CLOUD === true)	cloud-infra
+server/src/index.ts	if (IS_CLOUD && process.env.NODE_ENV !== "development") {	commercial-ui
+server/src/lib/apiKeyLimits.ts	if (!IS_CLOUD) {	quota
+server/src/lib/apiRateLimit.ts	if (!IS_CLOUD) {	quota
+server/src/lib/apiRateLimitPolicy.ts	if (!IS_CLOUD) {	quota
+server/src/lib/auth-utils.ts	if (!IS_CLOUD) {	signup
+server/src/lib/auth.ts	...(IS_CLOUD && process.env.TURNSTILE_SECRET_KEY && process.env.NODE_ENV === "production"	signup
+server/src/lib/auth.ts	if (!IS_CLOUD) return;	signup
+server/src/lib/auth.ts	if (IS_CLOUD) {	signup
+server/src/lib/auth.ts	if (IS_CLOUD && ctx.path === "/organization/invite-member") {	signup
+server/src/lib/const.ts	export const IS_CLOUD = process.env.CLOUD === "true";	cloud-infra
+server/src/lib/const.ts	// rybbit-unlocked: separates "cloud features" from "cloud billing". IS_CLOUD still means billing/quotas/	cloud-infra
+server/src/lib/const.ts	export const CLOUD_FEATURES = IS_CLOUD || UNLOCK_CLOUD_FEATURES;	cloud-infra
+server/src/lib/email/email.ts	if (IS_CLOUD || (CLOUD_FEATURES && process.env.RESEND_API_KEY)) {	commercial-ui
+server/src/lib/memberLimits.ts	if (!IS_CLOUD) {	quota
+server/src/lib/subscriptionUtils.ts	const pastDue = IS_CLOUD ? pastDuePayment(subscription) : null;	billing
+server/src/lib/subscriptionUtils.ts	if (!IS_CLOUD || !subscription) {	billing
+server/src/lib/subscriptionUtils.ts	if (!IS_CLOUD || subscription?.status !== "free" || !siteCreatedAt) {	billing
+server/src/mcp/auth.ts	const { IS_CLOUD } = await import("../lib/const.js");	quota
+server/src/mcp/auth.ts	if (!IS_CLOUD) {	quota
+server/src/services/import/importQuotaManager.ts	if (!IS_CLOUD) return true;	quota
+server/src/services/import/importQuotaManager.ts	if (!IS_CLOUD) return;	quota
+server/src/services/import/importQuotaManager.ts	if (IS_CLOUD) {	quota
+server/src/services/import/importQuotaTracker.ts	if (!IS_CLOUD) {	quota
+server/src/services/lifecycleEmails/lifecycleEmailService.ts	if (!IS_CLOUD) return;	commercial-ui
+server/src/services/sites/siteConfigurationLifecycle.ts	if (IS_CLOUD) {	quota
+server/src/services/sites/siteConfigurationLifecycle.ts	if (IS_CLOUD) {	quota
+server/src/services/sites/siteConfigurationLifecycle.ts	if (IS_CLOUD && (input.sessionReplay === true || enabledStandardFeatures.length > 0)) {	quota
+server/src/services/storage/r2StorageService.ts	if (IS_CLOUD && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY) {	commercial-ui
+server/src/services/storage/r2StorageService.ts	this.logger.debug("R2Storage not enabled - missing IS_CLOUD or R2 credentials");	commercial-ui
+server/src/services/telemetryService.ts	if (!IS_CLOUD && !DISABLE_TELEMETRY) {	telemetry
+server/src/services/telemetryService.ts	if (IS_CLOUD || DISABLE_TELEMETRY) {	telemetry
+server/src/services/usageService.ts	return IS_CLOUD && process.env.NODE_ENV !== "development";	billing
