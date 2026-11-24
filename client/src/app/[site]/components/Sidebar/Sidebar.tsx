@@ -29,7 +29,7 @@ import { CommandPaletteTrigger } from "../../../../components/command-palette/Co
 import { Sidebar as SidebarComponents } from "../../../../components/sidebar/Sidebar";
 import { SiteSettings } from "../../../../components/SiteSettings/SiteSettings";
 import { useAppEnv } from "../../../../hooks/useIsProduction";
-import { DEPLOYMENT, IS_CLOUD } from "../../../../lib/const";
+import { CLOUD_FEATURES, DEPLOYMENT } from "../../../../lib/const";
 import { getSiteRouteContext } from "../../../../lib/siteRoute";
 import { useStripeSubscription } from "../../../../lib/subscription/useStripeSubscription";
 import { useEmbedPageOptions } from "../../utils";
@@ -87,7 +87,7 @@ function SidebarContent() {
           />
         </div>
         <SidebarComponents.SectionHeader>{t("Traffic")}</SidebarComponents.SectionHeader>
-        {IS_CLOUD && (
+        {CLOUD_FEATURES && (
           <SidebarComponents.Item
             label={t("Pages")}
             active={isActiveTab("pages")}
@@ -101,7 +101,7 @@ function SidebarContent() {
           href={getTabPath("globe")}
           icon={<Globe2 className="w-4 h-4" />}
         />
-        {IS_CLOUD && (
+        {CLOUD_FEATURES && (
           <SidebarComponents.Item
             label={t("Bots")}
             active={isActiveTab("bots")}
@@ -189,7 +189,7 @@ function SidebarContent() {
           href={getTabPath("errors")}
           icon={<AlertTriangle className="w-4 h-4" />}
         />
-        {IS_CLOUD && !isMobileSite && (
+        {CLOUD_FEATURES && !isMobileSite && (
           <SidebarComponents.Item
             label={t("Performance")}
             active={isActiveTab("performance")}
@@ -199,8 +199,8 @@ function SidebarContent() {
         )}
         {/* API Playground is desktop-only, and it and Dashboards have no private-link route, so the header
             hides with whatever is left: Query, else API Playground on desktop, else nothing */}
-        {(IS_CLOUD || DEPLOYMENT || !privateKey) && (
-          <div className={IS_CLOUD || DEPLOYMENT ? undefined : "hidden md:block"}>
+        {(CLOUD_FEATURES || DEPLOYMENT || !privateKey) && (
+          <div className={CLOUD_FEATURES || DEPLOYMENT ? undefined : "hidden md:block"}>
             <SidebarComponents.SectionHeader>{t("Explore")}</SidebarComponents.SectionHeader>
           </div>
         )}
@@ -214,7 +214,7 @@ function SidebarContent() {
             />
           </div>
         )}
-        {(IS_CLOUD || DEPLOYMENT) && (
+        {(CLOUD_FEATURES || DEPLOYMENT) && (
           <>
             <SidebarComponents.Item
               label={t("Query")}

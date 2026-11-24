@@ -11,7 +11,7 @@ import { useEmbedablePage } from "../app/[site]/utils";
 import { useAdminPermission } from "../app/admin/hooks/useAdminPermission";
 import { useSignout } from "../hooks/useSignout";
 import { authClient } from "../lib/auth";
-import { DEPLOYMENT, IS_CLOUD } from "../lib/const";
+import { CLOUD_FEATURES, DEPLOYMENT, IS_CLOUD } from "../lib/const";
 import { getSiteRouteContext } from "../lib/siteRoute";
 import { useStore } from "../lib/store";
 import { useStripeSubscription } from "../lib/subscription/useStripeSubscription";
@@ -24,7 +24,7 @@ function AdminLink() {
   const pathname = usePathname();
   const { isAdmin } = useAdminPermission();
   const t = useExtracted();
-  if ((!IS_CLOUD && !DEPLOYMENT) || !isAdmin) return null;
+  if ((!CLOUD_FEATURES && !DEPLOYMENT) || !isAdmin) return null;
 
   return (
     <RailLink

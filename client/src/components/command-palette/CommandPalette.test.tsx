@@ -30,6 +30,8 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mocks.push }),
 }));
 
+// rybbit-unlocked: the sidebar rules under test are the non-cloud ones, so pin the unlock flag off here.
+vi.mock("@/lib/const", async importOriginal => ({ ...(await importOriginal<object>()), CLOUD_FEATURES: false }));
 vi.mock("next-themes", () => ({ useTheme: () => ({ theme: "dark", setTheme: mocks.setTheme }) }));
 
 vi.mock("@uidotdev/usehooks", () => ({ useWindowSize: () => ({ width: 1280, height: 800 }) }));
