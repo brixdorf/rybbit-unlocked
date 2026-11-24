@@ -85,6 +85,10 @@ export function GSCManager({ disabled = false, siteId }: GSCManagerProps) {
             </Button>
           </ConfirmationModal>
         </div>
+      ) : connection?.oauthConfigured === false ? (
+        <p className="text-sm text-muted-foreground">
+          {t("Google Search Console is not configured on this server. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to enable it.")}
+        </p>
       ) : (
         <Button onClick={() => connect()} disabled={disabled || isConnecting}>
           <SiGoogle />

@@ -3,6 +3,8 @@ import { authedFetch } from "../../utils";
 export type GSCConnectionStatus = {
   connected: boolean;
   gscPropertyUrl: string | null;
+  // false when the server has no GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET (rybbit-unlocked)
+  oauthConfigured?: boolean;
 };
 
 export type GSCConnectResponse = {

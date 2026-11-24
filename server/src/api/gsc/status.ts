@@ -16,18 +16,23 @@ export async function getGSCStatus(req: FastifyRequest<GetGSCStatusRequest>, res
       return res.status(400).send({ error: "Invalid site ID" });
     }
 
+    // rybbit-unlocked: lets the client explain a missing Google OAuth setup instead of failing after a click
+    const oauthConfigured = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
+
     const [connection] = await db.select().from(gscConnections).where(eq(gscConnections.siteId, numericSiteId));
 
     if (!connection) {
       return res.send({
         connected: false,
         gscPropertyUrl: null,
+        oauthConfigured,
       });
     }
 
     return res.send({
       connected: true,
       gscPropertyUrl: connection.gscPropertyUrl,
+      oauthConfigured,
     });
   } catch (error) {
     req.log.error(error, "Error checking GSC status");

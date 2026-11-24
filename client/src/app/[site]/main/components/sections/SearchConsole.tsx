@@ -20,7 +20,7 @@ import { SearchConsoleDialog } from "./SearchConsoleDialog";
 
 type Tab = "queries" | "pages" | "countries" | "devices";
 
-function ConnectPrompt() {
+function ConnectPrompt({ oauthConfigured }: { oauthConfigured?: boolean }) {
   const { mutate: connect, isPending } = useConnectGSC();
   const t = useExtracted();
 
@@ -34,7 +34,11 @@ function ConnectPrompt() {
       <div className="text-sm text-neutral-600 dark:text-neutral-400 text-center max-w-sm">
         {t("Connect your Google Search Console account to view search performance data including top keywords and pages.")}
       </div>
-      {canConnect ? (
+      {oauthConfigured === false ? (
+        <div className="text-sm text-neutral-500 text-center max-w-sm">
+          {t("Google Search Console is not configured on this server. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to enable it.")}
+        </div>
+      ) : canConnect ? (
         <Button onClick={() => connect()} disabled={isPending}>
           <SiGoogle />
           {isPending ? t("Connecting...") : t("Connect Google Search Console")}
@@ -185,7 +189,7 @@ export function SearchConsole() {
         <Tabs defaultValue="queries" value={tab} onValueChange={value => setTab(value as Tab)}>
           {topSection}
           {!isConnected ? (
-            <ConnectPrompt />
+            <ConnectPrompt oauthConfigured={connection?.oauthConfigured} />
           ) : (
             <>
               <TabsContent value="queries">
