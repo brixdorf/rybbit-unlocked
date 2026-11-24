@@ -110,3 +110,45 @@ python3 -m http.server 5500 --directory scripts/demo
   `--time-scale 1` for real durations (slow). Historical sessions use realistic durations.
 - A run adds data; it does not clear anything. Use a fresh site (or delete the import in Site Settings, Imports) to start over.
 - The script exits non-zero on any failed request and prints the response body of the first failures.
+
+## Full before/after demo
+
+`run-demo.sh` proves the fork's unlocked features by screenshotting the **stock upstream build** and this **fork** against
+the **same generated data**, then writes a side-by-side `screenshots/REPORT.md`.
+
+```bash
+scripts/demo/run-demo.sh             # Postgres schema must already exist
+scripts/demo/run-demo.sh --migrate   # opt-in: runs drizzle-kit migrate on the disposable demo database first
+```
+
+### One-time setup
+
+```bash
+# 1. Databases from the regular compose file
+docker compose up -d clickhouse postgres redis
+# 2. A small proxy on :8080 that routes /api to the backend (3001) and the rest to the client (3002), like production Caddy
+docker run -d --name devproxy --network host -v "$PWD/scripts/demo/Caddyfile:/etc/caddy/Caddyfile" caddy:2.10.0
+# 3. A stock upstream checkout to compare against, built the same way as the fork
+git worktree add --detach ../rybbit-stock <upstream-commit>
+for d in . ../rybbit-stock; do
+  (cd "$d" && pnpm install --frozen-lockfile && pnpm --filter @rybbit/shared build \
+    && (cd server && pnpm build) \
+    && (cd client && NEXT_PUBLIC_BACKEND_URL=http://localhost:8080 pnpm build))
+done
+```
+
+Phases: preflight (containers healthy, builds present, fork server built with `pnpm build` if stale) -> schema check
+(aborts with a message if table `"user"` is missing; `--migrate` is the only thing that creates it) -> start stock
+backend + client -> `bootstrap.mjs` (sign up admin, create org, site `demo-shop.example`, unrestricted org API key) ->
+`generate-traffic.mjs --setup --live` -> BEFORE shots -> stop stock, start fork on the same DB (the restart promotes the
+first user to admin) -> AFTER shots -> `make-report.mjs` -> stop servers (containers stay up).
+
+Environment: `STOCK_DIR` (default `../rybbit-stock` next to the repo), `FORK_DIR` (repo root), `OUT_DIR`
+(`scripts/demo/screenshots`), `ENV_FILE` (server env to source; default `scripts/demo/demo.env`, created from `demo.env.example` with a fresh `BETTER_AUTH_SECRET`), `BASE_URL` (`http://localhost:8080`, the proxy in front
+of backend 3001 and client 3002), `VISITORS` (800), `DAYS` (30), `LIVE_MIN` (2), `WORK_DIR` (`/tmp/rybbit-demo`: logs, state),
+`DEMO_EMAIL`/`DEMO_PASSWORD`/`DEMO_DOMAIN`, `SKIP_GENERATE=1` to reuse existing data.
+
+`screenshots.mjs --phase before|after --site-id N` logs in through the UI and captures the same numbered list in both
+phases (`before-03-pages.png` pairs with `after-03-pages.png`); hidden pages are opened by direct URL and shown as
+rendered. One failing shot is logged and skipped. `manifest-<phase>.json` records each shot's final URL and page text.
+Smoke test without an account: `node scripts/demo/screenshots.mjs --phase before --login-page-only --out /tmp/x`.
