@@ -1,0 +1,39 @@
+<!-- Low-memory ClickHouse server profile for small sites (rybbit-unlocked fork).
+     Mounted at /etc/clickhouse-server/config.d/zz_low_memory.xml by docker-compose.lowmem.yml.
+     Loaded after the base config.d files, so these values win over resource_limits.xml.
+     Target: a 2-4 GB VPS where ClickHouse should stay under ~1 GB RSS at idle/light load. -->
+<clickhouse>
+    <!-- Hard cap for the server (all queries + merges + caches). Queries/merges that
+         would exceed it fail with MEMORY_LIMIT_EXCEEDED instead of OOM-killing the host. -->
+    <max_server_memory_usage>1073741824</max_server_memory_usage>
+    <!-- Cap background merges/mutations to a slice of that budget. -->
+    <merges_mutations_memory_usage_to_ram_ratio>0.4</merges_mutations_memory_usage_to_ram_ratio>
+
+    <!-- Caches (defaults: mark 5GiB, uncompressed 0, index_mark 5GiB, mmap 1000 entries,
+         compiled_expression 128MiB) -->
+    <mark_cache_size>134217728</mark_cache_size>
+    <uncompressed_cache_size>0</uncompressed_cache_size>
+    <index_mark_cache_size>33554432</index_mark_cache_size>
+    <index_uncompressed_cache_size>0</index_uncompressed_cache_size>
+    <mmap_cache_size>16</mmap_cache_size>
+    <compiled_expression_cache_size>16777216</compiled_expression_cache_size>
+    <compiled_expression_cache_elements_size>100</compiled_expression_cache_elements_size>
+
+    <!-- Fewer background threads: lower baseline memory (thread stacks, merge buffers). -->
+    <background_pool_size>2</background_pool_size>
+    <!-- pool_size * ratio must be >= merge_tree.number_of_free_entries_in_pool_to_execute_mutation (20)
+         and ..._to_execute_optimize_entire_partition (25),
+         otherwise the server refuses to start (verified on 26.3). 2 threads * 20 = 40 task slots. -->
+    <background_merges_mutations_concurrency_ratio>20</background_merges_mutations_concurrency_ratio>
+    <background_schedule_pool_size>8</background_schedule_pool_size>
+    <background_fetches_pool_size>2</background_fetches_pool_size>
+    <background_move_pool_size>2</background_move_pool_size>
+    <background_common_pool_size>4</background_common_pool_size>
+    <background_message_broker_schedule_pool_size>2</background_message_broker_schedule_pool_size>
+    <background_distributed_schedule_pool_size>2</background_distributed_schedule_pool_size>
+
+    <!-- Admission control for dashboard queries (default 100). -->
+    <max_concurrent_queries>20</max_concurrent_queries>
+    <concurrent_threads_soft_limit_num>2</concurrent_threads_soft_limit_num>
+    <max_thread_pool_size>1000</max_thread_pool_size>
+</clickhouse>

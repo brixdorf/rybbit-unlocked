@@ -1,0 +1,60 @@
+# Low-memory profile for small sites (rybbit-unlocked fork). Use as an overlay:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.lowmem.yml up -d
+#
+# (fork/update.sh picks this up via COMPOSE_FILES="docker-compose.lowmem.yml".)
+# See fork/README.md and fork/bench/RESULTS.md for what this buys and costs.
+services:
+  clickhouse:
+    # Hard container ceiling; ClickHouse's own max_server_memory_usage (1 GiB)
+    # keeps it below this so it fails queries instead of being OOM-killed.
+    mem_limit: 1536m
+    volumes:
+      # config.d files load alphabetically, so zz_* wins over resource_limits.xml.
+      - ./fork/clickhouse/low-memory.xml:/etc/clickhouse-server/config.d/zz_low_memory.xml:ro
+      # users.d: must sort after user_settings.xml (max_threads / max_memory_usage there).
+      - ./fork/clickhouse/low-memory-user.xml:/etc/clickhouse-server/users.d/zz_low_memory.xml:ro
+
+  postgres:
+    # Compose replaces `command` wholesale; the image entrypoint still handles init.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=64MB
+      - -c
+      - effective_cache_size=192MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - max_connections=50
+      - -c
+      - wal_buffers=4MB
+      - -c
+      - max_wal_size=512MB
+      - -c
+      - autovacuum_max_workers=2
+
+  redis:
+    # Replaces the base command, so keep requirepass/AOF/noeviction in sync with docker-compose.yml.
+    # noeviction + maxmemory: when full, writes error instead of dropping session keys;
+    # 192mb is far above what 30-minute-TTL session keys need for small sites.
+    command:
+      - redis-server
+      - --requirepass
+      - ${REDIS_PASSWORD:-changeme}
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --maxmemory
+      - 192mb
+      - --maxmemory-policy
+      - noeviction
+
+  backend:
+    environment:
+      # 0 = single-process mode (no primary + worker pair), the leanest option.
+      # (Any value >= 1 forks that many workers in addition to the primary process.)
+      - CLUSTER_WORKERS=0
