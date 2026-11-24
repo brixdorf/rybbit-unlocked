@@ -8,9 +8,9 @@ import { clickhouse } from "../../db/clickhouse/clickhouse.js";
 import { processResults } from "../../api/analytics/utils/utils.js";
 import { getTimeStatement } from "../../api/analytics/utils/timeWindow.js";
 import { createServiceLogger } from "../../lib/logger/logger.js";
-import { sendWeeklyDigestEmail, sendWeeklyReportEmail } from "../../lib/email/email.js";
+import { isEmailConfigured, sendWeeklyDigestEmail, sendWeeklyReportEmail } from "../../lib/email/email.js";
 import { filterSitesByMemberAccess } from "../../lib/access.js";
-import { IS_CLOUD } from "../../lib/const.js";
+import { CLOUD_FEATURES } from "../../lib/const.js";
 import {
   BreakdownDimension,
   buildBreakdownQuery,
@@ -426,8 +426,12 @@ class WeeklyReportService {
   }
 
   public async generateAndSendReports(): Promise<void> {
-    if (!IS_CLOUD) {
-      this.logger.info("Skipping weekly reports for non-cloud instance");
+    if (!CLOUD_FEATURES) {
+      this.logger.info("Skipping weekly reports: cloud features disabled");
+      return;
+    }
+    if (!isEmailConfigured()) {
+      this.logger.info("Skipping weekly reports: no email provider configured (set RESEND_API_KEY)");
       return;
     }
 
@@ -471,8 +475,8 @@ class WeeklyReportService {
   }
 
   private initializeWeeklyReportCron(): void {
-    if (!IS_CLOUD) {
-      this.logger.info("Skipping weekly report cron initialization for non-cloud instance");
+    if (!CLOUD_FEATURES) {
+      this.logger.info("Skipping weekly report cron initialization: cloud features disabled");
       return;
     }
 

@@ -84,6 +84,7 @@ vi.mock("../../lib/access.js", () => ({
 }));
 
 vi.mock("../../lib/email/email.js", () => ({
+  isEmailConfigured: () => true,
   sendWeeklyReportEmail: mocks.sendWeeklyReportEmail,
   sendWeeklyDigestEmail: mocks.sendWeeklyDigestEmail,
 }));
@@ -91,6 +92,7 @@ vi.mock("../../lib/email/email.js", () => ({
 vi.mock("../../lib/const.js", async importOriginal => ({
   ...(await importOriginal<typeof import("../../lib/const.js")>()),
   IS_CLOUD: true,
+  CLOUD_FEATURES: true,
 }));
 
 vi.mock("../../lib/logger/logger.js", () => ({

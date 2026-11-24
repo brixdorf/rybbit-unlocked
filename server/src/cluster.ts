@@ -1,7 +1,7 @@
 import cluster from "node:cluster";
 import { initializeClickhouse } from "./db/clickhouse/clickhouse.js";
 import { initPostgres } from "./db/postgres/initPostgres.js";
-import { IS_CLOUD } from "./lib/const.js";
+import { CLOUD_FEATURES, IS_CLOUD } from "./lib/const.js";
 import { createServiceLogger } from "./lib/logger/logger.js";
 import { lifecycleEmailService } from "./services/lifecycleEmails/lifecycleEmailService.js";
 import { sessionsService } from "./services/sessions/sessionsService.js";
@@ -51,8 +51,10 @@ if (workerCount === 0) {
   telemetryService.startTelemetryCron();
   usageService.startUsageCheckCron();
   unclaimedSiteCleanupService.startCleanupCron();
-  if (IS_CLOUD && process.env.NODE_ENV !== "development") {
+  if (CLOUD_FEATURES && process.env.NODE_ENV !== "development") {
     weeklyReportService.startWeeklyReportCron();
+  }
+  if (IS_CLOUD && process.env.NODE_ENV !== "development") {
     lifecycleEmailService.startLifecycleCron();
   }
 
@@ -133,8 +135,10 @@ if (workerCount === 0) {
     unclaimedSiteCleanupService.stopCleanupCron();
     void sessionsService.close();
     telemetryService.stopTelemetryCron();
-    if (IS_CLOUD) {
+    if (CLOUD_FEATURES) {
       weeklyReportService.stopWeeklyReportCron();
+    }
+    if (IS_CLOUD) {
       lifecycleEmailService.stopLifecycleCron();
     }
 

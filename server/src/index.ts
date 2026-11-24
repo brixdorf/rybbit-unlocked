@@ -16,7 +16,7 @@ import type { OrgRole, ScopeStatements } from "@rybbit/shared";
 import { auth } from "./lib/auth.js";
 import { oauthWellKnownRoutes } from "./mcp/wellKnown.js";
 import { createCorsOptionsDelegate, createRejectUntrustedOriginHook } from "./lib/cors.js";
-import { IS_CLOUD } from "./lib/const.js";
+import { CLOUD_FEATURES, IS_CLOUD } from "./lib/const.js";
 import { logger } from "./lib/logger/logger.js";
 import { registerRequestLogging } from "./lib/logger/requestLogging.js";
 import { botEventQueue, botObservationQueue } from "./services/tracker/botBlocking/botEventQueue.js";
@@ -185,8 +185,10 @@ const start = async () => {
       telemetryService.startTelemetryCron();
       usageService.startUsageCheckCron();
       unclaimedSiteCleanupService.startCleanupCron();
-      if (IS_CLOUD && process.env.NODE_ENV !== "development") {
+      if (CLOUD_FEATURES && process.env.NODE_ENV !== "development") {
         weeklyReportService.startWeeklyReportCron();
+      }
+      if (IS_CLOUD && process.env.NODE_ENV !== "development") {
         lifecycleEmailService.startLifecycleCron();
       }
     }

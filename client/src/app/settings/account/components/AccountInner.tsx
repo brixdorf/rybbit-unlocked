@@ -14,7 +14,7 @@ import { Input } from "../../../../components/ui/input";
 import { Switch } from "../../../../components/ui/switch";
 import { useActiveOrgName } from "../../../../hooks/useActiveOrgName";
 import { validateEmail } from "../../../../lib/auth-utils";
-import { IS_CLOUD } from "../../../../lib/const";
+import { CLOUD_FEATURES } from "../../../../lib/const";
 import { DangerRow, DangerZone, LedgerRow, LedgerRows, LedgerSaveBar, LedgerSection } from "../../components/Ledger";
 import { ApiKeyManager } from "./ApiKeyManager";
 import { ChangePassword } from "./ChangePassword";
@@ -226,7 +226,7 @@ export function AccountInner() {
 
       <LedgerSection title={t("Preferences")}>
         <LedgerRows>
-          {sendAutoEmailReports !== undefined && IS_CLOUD && (
+          {sendAutoEmailReports !== undefined && CLOUD_FEATURES && (
             <LedgerRow
               label={t("Weekly email reports")}
               description={t("A traffic summary for each site you can access.")}

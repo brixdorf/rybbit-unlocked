@@ -18,7 +18,7 @@ vi.mock("resend", () => ({
   },
 }));
 
-vi.mock("../const.js", () => ({ IS_CLOUD: true }));
+vi.mock("../const.js", () => ({ IS_CLOUD: true, CLOUD_FEATURES: true }));
 
 const { isContactUnsubscribed, sendEmail, unsubscribeContact } = await import("./email.js");
 

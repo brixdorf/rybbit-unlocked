@@ -2,7 +2,7 @@ import { render } from "@react-email/components";
 import { Resend } from "resend";
 import type { SiteReport, WeeklyDigest } from "../../services/weekyReports/weeklyReportTypes.js";
 import { welcome } from "../../services/lifecycleEmails/lifecycleContent.js";
-import { IS_CLOUD } from "../const.js";
+import { CLOUD_FEATURES, IS_CLOUD } from "../const.js";
 import { signExpiringPayload } from "../signedToken.js";
 import { letterText, type Letter } from "./letter.js";
 import {
@@ -30,9 +30,13 @@ import { WeeklyReportEmail, weeklyReportSubject } from "./templates/WeeklyReport
 let resend: Resend | undefined;
 let marketingAudienceId: string | null = null;
 
-if (IS_CLOUD) {
+// rybbit-unlocked: self-hosted installs get email when RESEND_API_KEY is set; without it sendEmail is a no-op.
+if (IS_CLOUD || (CLOUD_FEATURES && process.env.RESEND_API_KEY)) {
   resend = new Resend(process.env.RESEND_API_KEY);
 }
+
+/** True when an email transport is configured (rybbit-unlocked: lets self-hosted skip work that only sends email). */
+export const isEmailConfigured = (): boolean => !!resend;
 
 /**
  * The Resend SDK resolves failed requests (HTTP errors, rate limits, network failures) as
@@ -116,10 +120,11 @@ export const unsubscribeContact = async (email: string): Promise<void> => {
   }
 };
 
-const TRANSACTIONAL_FROM = "Rybbit <automail@email.rybbit.com>";
+// rybbit-unlocked: self-hosters must send from their own verified Resend domain (EMAIL_FROM / EMAIL_REPLY_TO).
+const TRANSACTIONAL_FROM = process.env.EMAIL_FROM || "Rybbit <automail@email.rybbit.com>";
 const BILL_FROM = "Bill from Rybbit <bill@email.rybbit.com>";
 // Replies to any email land in the monitored support inbox.
-const REPLY_TO = "hello@rybbit.com";
+const REPLY_TO = process.env.EMAIL_REPLY_TO || "hello@rybbit.com";
 
 interface SendOptions {
   text?: string;
